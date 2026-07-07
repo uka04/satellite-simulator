@@ -16,27 +16,32 @@ int main() {
 		printf("can't open the log file");
 		return 1;
 	}
-		
-	int temp = get_temperature();
-	int battery = get_battery();
+	
+	char line1[80];
+	char line2[80];
+	char line3[80];
 	char time_str[30];
 
-	get_current_time_str(time_str, sizeof(time_str));
+	get_current_time_str(time_str, sizeof(time_str));	
 	
-	printf("[%s]\n", time_str);
-	printf("==== Satellite Control Simulator ====\n");
-	printf("Temperature : %d C\n", temp);
-	printf("Battery     : %d %%\n", battery);
-	printf("Voltage     : 4.10 V\n");
-	printf("Mode        : NORMAL\n");	
-	
-	fprintf(log_file, "[%s]\n", time_str);
-	fprintf(log_file, "==== Satellite Control Simulator ===\n");
-	fprintf(log_file, "Temperature : %d C\n", temp);
-	fprintf(log_file, "Battery     : %d %%\n", battery);
-	fprintf(log_file, "------------------------------------\n");
+	SatelliteData my_satellite;
+
+	if (read_tle_data("data/iss.tle", &my_satellite)) {
+        printf("[%s]\n", time_str);
+        printf("==== Satellite Control Simulator ====\n");
+        printf("Satellite Name : %s\n", my_satellite.name);
+        printf("mean_motion    : %.2f orbits/day\n", my_satellite.mean_motion);
+        
+        fprintf(log_file, "[%s]\n", time_str);
+        fprintf(log_file, "==== Satellite Control Simulator ====\n");
+        fprintf(log_file, "Satellite Name : %s\n", my_satellite.name);
+        fprintf(log_file, "mean_motion    : %.2f orbits/day\n", my_satellite.mean_motion);
+        fprintf(log_file, "------------------------------------\n");
+    } else {
+        printf("Error: Failed to read satellite data.\n");
+    }
 
 	fclose(log_file);
-	
+
 	return 0;
 }

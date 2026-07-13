@@ -31,5 +31,6 @@ typedef struct {
 
 int read_tle_data(const char *file_path, SatelliteData *out_data);
 void calculate_more_info(const SatelliteData *tle, SatelliteMoreInfo *out_info);
+int is_tle_file(const char *filename);
 
 #endif

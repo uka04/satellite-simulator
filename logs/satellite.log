@@ -493,3 +493,115 @@ Day_Distance_km   : Around 650540.505720
 Period_min        : Around 92.968846
 Data Age          : 119.81 hours ago
 ------------------------------------
+[2026-07-13 09:36:34]
+==== Satellite Control Simulator ====
+Satellite Name : ISS (ZARYA)             
+
+-- Line 2 Info --
+Norad Id       : 25544
+Classification : U
+CosparId       : 98067A  
+Epoch_Year     : 26
+Epoch_Day      : 186.443766
+Decay Rate1    : 0.000089
+Decay Rate2    : 0.000000
+Bstar          : 0.00017013
+
+-- Line 3 Info --
+Inclination       : 51.6303
+Raan              : 209.7275
+Eccentricity      : 0.0006727
+Perigee           : 258.7638
+Mean_Anomaly      : 101.2595
+Mean_motion       : 15.48905966 orbits/day
+Revolution_Number : 57458
+
+-- More Info --
+Day_Distance_km   : Around 650540.505720
+Period_min        : Around 92.968846
+Data Age          : 190.96 hours ago
+------------------------------------
+[2026-07-13 09:44:05]
+==== Satellite Control Simulator ====
+Satellite Name : CSS (TIANHE)            
+
+-- Line 2 Info --
+Norad Id       : 48274
+Classification : U
+CosparId       : 21035A  
+Epoch_Year     : 26
+Epoch_Day      : 193.330508
+Decay Rate1    : 0.000008
+Decay Rate2    : 0.000000
+Bstar          : 0.00001470
+
+-- Line 3 Info --
+Inclination       : 41.4686
+Raan              : 169.1964
+Eccentricity      : 0.0002428
+Perigee           : 290.9815
+Mean_Anomaly      : 69.0763
+Mean_motion       : 15.58035041 orbits/day
+Revolution_Number : 29709
+
+-- More Info --
+Day_Distance_km   : Around 654374.717220
+Period_min        : Around 92.424109
+Data Age          : 25.80 hours ago
+------------------------------------
+[2026-07-13 09:44:20]
+==== Satellite Control Simulator ====
+Satellite Name : STARLINK-37880          
+
+-- Line 2 Info --
+Norad Id       : 69546
+Classification : U
+CosparId       : 26135A  
+Epoch_Year     : 26
+Epoch_Day      : 193.833356
+Decay Rate1    : 0.000348
+Decay Rate2    : 0.000000
+Bstar          : 0.00063889
+
+-- Line 3 Info --
+Inclination       : 97.2848
+Raan              : 222.1058
+Eccentricity      : 0.0000491
+Perigee           : 175.6225
+Mean_Anomaly      : 304.3577
+Mean_motion       : 15.49162352 orbits/day
+Revolution_Number : 542
+
+-- More Info --
+Day_Distance_km   : Around 650648.187840
+Period_min        : Around 92.953460
+Data Age          : 13.74 hours ago
+------------------------------------
+[2026-07-13 09:44:57]
+==== Satellite Control Simulator ====
+Satellite Name : STARLINK-37881          
+
+-- Line 2 Info --
+Norad Id       : 69547
+Classification : U
+CosparId       : 26135B  
+Epoch_Year     : 26
+Epoch_Day      : 193.833356
+Decay Rate1    : -0.028464
+Decay Rate2    : 0.000000
+Bstar          : -0.05374300
+
+-- Line 3 Info --
+Inclination       : 97.2842
+Raan              : 222.2019
+Eccentricity      : 0.0001408
+Perigee           : 58.9153
+Mean_Anomaly      : 275.7603
+Mean_motion       : 15.52294219 orbits/day
+Revolution_Number : 542
+
+-- More Info --
+Day_Distance_km   : Around 651963.571980
+Period_min        : Around 92.765919
+Data Age          : 13.75 hours ago
+------------------------------------

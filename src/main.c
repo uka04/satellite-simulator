@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <time.h>
+#include <string.h>
+#include <dirent.h>
 #include "sensor.h"
+
+#define MAX_SATELLITES 20
+#define PATH_LENGTH 300
 
 void get_current_time_str(char *buffer, int max_size) {
 	time_t raw_time = time(NULL);
@@ -10,6 +15,48 @@ void get_current_time_str(char *buffer, int max_size) {
 }
 
 int main() {
+	char file_list[MAX_SATELLITES][PATH_LENGTH];
+	int file_count = 0;
+
+	DIR *dir = opendir("data");
+	if (dir == NULL) {
+		printf("can't open the diretory");
+		return 1;
+	}
+
+	struct dirent *entry;
+	while ((entry = readdir(dir)) != NULL && file_count < MAX_SATELLITES) {
+		if (entry->d_type == DT_REG && is_tle_file(entry->d_name)) {
+			snprintf(file_list[file_count], PATH_LENGTH, "data/%s", entry->d_name);
+			file_count++;
+		}
+	}
+	closedir(dir);
+
+	if (file_count == 0) {
+		printf("No file in 'data' folder");
+		return 1;
+	}
+
+	printf("==== List of Satellite ====\n");
+	for (int i = 0; i < file_count; i++) {
+		printf("[%d] %s\n", i + 1, file_list[i]);
+	}
+	printf("===========================\n");
+	printf("Select Satellite. (1-%d): ", file_count);
+
+	int choice;
+	if (scanf("%d", &choice) != 1) {
+		printf("Select a valid number\n");
+		return 1;
+	}
+	
+	if (choice < 1 || choice > file_count) {
+		printf("Wrong number.\n");
+		return 1;
+	}
+
+	int selected_index = choice - 1;
 
 	FILE *log_file = fopen("logs/satellite.log", "a");
 	if (log_file == NULL) {
@@ -27,7 +74,7 @@ int main() {
 	SatelliteData my_satellite;
 	SatelliteMoreInfo my_info;
 
-	if (read_tle_data("data/iss.tle", &my_satellite)) {
+	if (read_tle_data(file_list[selected_index], &my_satellite)) {
 		calculate_more_info(&my_satellite, &my_info);
 		
         printf("[%s]\n", time_str);

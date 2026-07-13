@@ -5,6 +5,18 @@
 #include <time.h>
 #include "sensor.h"
 
+int is_tle_file(const char *filename) {
+	if (filename == NULL) return 0;
+
+	size_t len = strlen(filename);
+	// filename's length is longer then 4 (.tle)
+	// file's address + len - 4 address
+	if (len > 4 && strcmp(filename + len - 4, ".tle") == 0) {
+		return 1;
+	}
+	return 0;
+}
+
 int read_tle_data(const char *file_path, SatelliteData *out_data) {
 	FILE *fp = fopen(file_path, "r");
 	if (fp == NULL) {

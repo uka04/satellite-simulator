@@ -639,3 +639,241 @@ Day_Distance_km   : Around 650540.505720
 Period_min        : Around 92.968846
 Data Age          : 216.41 hours ago
 ------------------------------------
+[2026-07-14 22:24:38]
+==== Satellite Control Simulator ====
+Satellite Name : ISS (ZARYA)             
+
+-- Line 2 Info --
+Norad Id       : 25544
+Classification : U
+CosparId       : 98067A  
+Epoch_Year     : 26
+Epoch_Day      : 186.443766
+Decay Rate1    : 0.000089
+Decay Rate2    : 0.000000
+Bstar          : 0.00017013
+
+-- Line 3 Info --
+Inclination       : 51.6303
+Raan              : 209.7275
+Eccentricity      : 0.0006727
+Perigee           : 258.7638
+Mean_Anomaly      : 101.2595
+Mean_motion       : 15.48905966 orbits/day
+Revolution_Number : 57458
+
+-- SGP4 Real-time Position --
+Latitude      : 26.6650 deg
+Longtitude    : -173.8013 deg
+Altitude      : 417.02 km
+Speed         : 7.66 km/s
+
+-- More Info --
+Day_Distance_km   : Around 650540.505720
+Period_min        : Around 92.968846
+Data Age          : 227.76 hours ago
+------------------------------------
+[2026-07-14 22:30:25]
+==== Satellite Control Simulator ====
+Satellite Name : ISS (ZARYA)             
+
+-- Line 2 Info --
+Norad Id       : 25544
+Classification : U
+CosparId       : 98067A  
+Epoch_Year     : 26
+Epoch_Day      : 186.443766
+Decay Rate1    : 0.000089
+Decay Rate2    : 0.000000
+Bstar          : 0.00017013
+
+-- Line 3 Info --
+Inclination       : 51.6303
+Raan              : 209.7275
+Eccentricity      : 0.0006727
+Perigee           : 258.7638
+Mean_Anomaly      : 101.2595
+Mean_motion       : 15.48905966 orbits/day
+Revolution_Number : 57458
+
+-- SGP4 Real-time Position --
+Latitude      : 41.3000 deg
+Longtitude    : -153.1559 deg
+Altitude      : 416.32 km
+Speed         : 7.66 km/s
+
+-- More Info --
+Day_Distance_km   : Around 650540.505720
+Period_min        : Around 92.968846
+Data Age          : 227.86 hours ago
+------------------------------------
+[2026-07-14 22:34:34]
+==== Satellite Control Simulator ====
+Satellite Name : OBJECT A                
+
+-- Line 2 Info --
+Norad Id       : 69538
+Classification : U
+CosparId       : 26134A  
+Epoch_Year     : 26
+Epoch_Day      : 194.640654
+Decay Rate1    : 0.000024
+Decay Rate2    : 0.000000
+Bstar          : 0.00015490
+
+-- Line 3 Info --
+Inclination       : 97.7005
+Raan              : 264.8493
+Eccentricity      : 0.0015944
+Perigee           : 175.9385
+Mean_Anomaly      : 184.1976
+Mean_motion       : 15.09452984 orbits/day
+Revolution_Number : 430
+
+-- SGP4 Real-time Position --
+Latitude      : -39.8775 deg
+Longtitude    : 79.6637 deg
+Altitude      : 537.12 km
+Speed         : 7.59 km/s
+
+-- More Info --
+Day_Distance_km   : Around 633970.253280
+Period_min        : Around 95.398798
+Data Age          : 31.20 hours ago
+------------------------------------
+[2026-07-15 08:46:14]
+==== Satellite Control Simulator ====
+Satellite Name : ISS (ZARYA)             
+
+-- Line 2 Info --
+Norad Id       : 25544
+Classification : U
+CosparId       : 98067A  
+Epoch_Year     : 26
+Epoch_Day      : 186.443766
+Decay Rate1    : 0.000089
+Decay Rate2    : 0.000000
+Bstar          : 0.00017013
+
+-- Line 3 Info --
+Inclination       : 51.6303
+Raan              : 209.7275
+Eccentricity      : 0.0006727
+Perigee           : 258.7638
+Mean_Anomaly      : 101.2595
+Mean_motion       : 15.48905966 orbits/day
+Revolution_Number : 57458
+
+-- SGP4 Real-time Position --
+Latitude      : -49.5788 deg
+Longtitude    : 92.1429 deg
+Altitude      : 419.48 km
+Speed         : 7.65 km/s
+
+-- More Info --
+Day_Distance_km   : Around 650540.505720
+Period_min        : Around 92.968846
+Data Age          : 238.12 hours ago
+------------------------------------
+[2026-07-15 08:48:51]
+==== Satellite Control Simulator ====
+Satellite Name : ISS (ZARYA)             
+
+-- Line 2 Info --
+Norad Id       : 25544
+Classification : U
+CosparId       : 98067A  
+Epoch_Year     : 26
+Epoch_Day      : 186.443766
+Decay Rate1    : 0.000089
+Decay Rate2    : 0.000000
+Bstar          : 0.00017013
+
+-- Line 3 Info --
+Inclination       : 51.6303
+Raan              : 209.7275
+Eccentricity      : 0.0006727
+Perigee           : 258.7638
+Mean_Anomaly      : 101.2595
+Mean_motion       : 15.48905966 orbits/day
+Revolution_Number : 57458
+
+-- SGP4 Real-time Position --
+Latitude      : -45.7743 deg
+Longtitude    : 106.1182 deg
+Altitude      : 419.27 km
+Speed         : 7.66 km/s
+
+-- More Info --
+Day_Distance_km   : Around 650540.505720
+Period_min        : Around 92.968846
+Data Age          : 238.16 hours ago
+------------------------------------
+[2026-07-15 09:12:31]
+==== Satellite Control Simulator ====
+Satellite Name : ISS (ZARYA)             
+
+-- Line 2 Info --
+Norad Id       : 25544
+Classification : U
+CosparId       : 98067A  
+Epoch_Year     : 26
+Epoch_Day      : 186.443766
+Decay Rate1    : 0.000089
+Decay Rate2    : 0.000000
+Bstar          : 0.00017013
+
+-- Line 3 Info --
+Inclination       : 51.6303
+Raan              : 209.7275
+Eccentricity      : 0.0006727
+Perigee           : 258.7638
+Mean_Anomaly      : 101.2595
+Mean_motion       : 15.48905966 orbits/day
+Revolution_Number : 57458
+
+-- SGP4 Real-time Position --
+Latitude      : 19.8345 deg
+Longtitude    : 177.1315 deg
+Altitude      : 417.23 km
+Speed         : 7.66 km/s
+
+-- More Info --
+Day_Distance_km   : Around 650540.505720
+Period_min        : Around 92.968846
+Data Age          : 238.56 hours ago
+------------------------------------
+[2026-07-15 09:18:59]
+==== Satellite Control Simulator ====
+Satellite Name : ISS (ZARYA)             
+
+-- Line 2 Info --
+Norad Id       : 25544
+Classification : U
+CosparId       : 98067A  
+Epoch_Year     : 26
+Epoch_Day      : 186.443766
+Decay Rate1    : 0.000089
+Decay Rate2    : 0.000000
+Bstar          : 0.00017013
+
+-- Line 3 Info --
+Inclination       : 51.6303
+Raan              : 209.7275
+Eccentricity      : 0.0006727
+Perigee           : 258.7638
+Mean_Anomaly      : 101.2595
+Mean_motion       : 15.48905966 orbits/day
+Revolution_Number : 57458
+
+-- SGP4 Real-time Position --
+Latitude      : 37.3595 deg
+Longtitude    : -162.2771 deg
+Altitude      : 416.34 km
+Speed         : 7.66 km/s
+
+-- More Info --
+Day_Distance_km   : Around 650540.505720
+Period_min        : Around 92.968846
+Data Age          : 238.67 hours ago
+------------------------------------

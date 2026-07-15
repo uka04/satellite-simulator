@@ -39,9 +39,23 @@ int main() {
 		return 1;
 	}
 
+	// select a satellite & formatting
 	printf("==== List of Satellite ====\n");
 	for (int i = 0; i < file_count; i++) {
-		printf("[%d] %s\n", i + 1, file_list[i]);
+		char display_name[PATH_LENGTH];
+
+		// read from +5
+		if (strncmp(file_list[i], "data/", 5) == 0) {
+			snprintf(display_name, sizeof(display_name), "%s", file_list[i] + 5);
+		} else {
+			snprintf(display_name, sizeof(display_name), "%s", file_list[i]);
+		}
+		char *ext = strrchr(display_name, '.');
+		if (ext != NULL && strcmp(ext, ".tle") == 0) {
+			*ext = '\0';
+		}
+
+		printf("[%d] %s\n", i + 1, display_name);
 	}
 	printf("===========================\n");
 	printf("Select Satellite. (1-%d): ", file_count);
@@ -64,10 +78,7 @@ int main() {
 		printf("can't open the log file");
 		return 1;
 	}
-	
-	char line1[80];
-	char line2[80];
-	char line3[80];
+
 	char time_str[30];
 
 	get_current_time_str(time_str, sizeof(time_str));	

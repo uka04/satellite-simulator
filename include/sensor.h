@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdio.h>
 #ifndef SENSOR_H
 #define SENSOR_H
 
@@ -44,8 +45,15 @@ typedef struct {
 int read_tle_data(const char *file_path, SatelliteData *out_data);
 void calculate_more_info(const SatelliteData *tle, SatelliteMoreInfo *out_info);
 int is_tle_file(const char *filename);
-
 int get_satellite_position(const SatelliteData *tle, double minutes_past_epoch, SatellitePosition *out_pos);
+
+
+void update_satellite(const SatelliteData *tle, const SatelliteMoreInfo *info,
+							SatellitePosition *out_pos, int *out_sgp4_ok);
+void print_satellite_info(FILE *stream, const char *time_str, const SatelliteData *tle, 
+							const SatelliteMoreInfo *info, const SatellitePosition *pos, int sgp4_ok);
+void run_simulator(const char *file_path);
+
 #ifdef __cplusplus
 }
 #endif

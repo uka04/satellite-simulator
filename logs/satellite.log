@@ -877,3 +877,37 @@ Day_Distance_km   : Around 650540.505720
 Period_min        : Around 92.968846
 Data Age          : 238.67 hours ago
 ------------------------------------
+[2026-07-16 09:22:02]
+==== Satellite Control Simulator ====
+Satellite Name : ISS (ZARYA)             
+
+-- Line 2 Info --
+Norad Id       : 25544
+Classification : U
+CosparId       : 98067A  
+Epoch_Year     : 26
+Epoch_Day      : 186.443766
+Decay Rate1    : 0.000089
+Decay Rate2    : 0.000000
+Bstar          : 0.00017013
+
+-- Line 3 Info --
+Inclination       : 51.6303
+Raan              : 209.7275
+Eccentricity      : 0.0006727
+Perigee           : 258.7638
+Mean_Anomaly      : 101.2595
+Mean_Motion       : 15.48905966 orbits/day
+Revolution_Number : 57458
+
+-- SGP4 Real-time Position --
+Latitude      : -44.2863 deg
+Longtitude    : 26.1484 deg
+Altitude      : 421.18 km
+Speed         : 7.65 km/s
+
+-- More Info --
+Day_Distance_km   : Around 650540.505720
+Period_min        : Around 92.968846
+Data Age          : 262.72 hours ago
+------------------------------------

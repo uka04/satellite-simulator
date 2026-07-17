@@ -3,6 +3,7 @@
 #include <string.h>
 #include <dirent.h>
 #include <math.h>
+#include <unistd.h>
 #include "sensor.h"
 
 #define MAX_SATELLITES 20
@@ -88,14 +89,30 @@ void run_simulator(const char *file_path) {
 
 	get_current_time_str(time_str, sizeof(time_str));
 		
-	print_satellite_info(stdout, time_str, &my_satellite, &my_info, &pos, sgp4_ok);
-
 	FILE *log_file = fopen("logs/satellite.log", "a");
 	if (log_file != NULL) {
 		print_satellite_info(log_file, time_str, &my_satellite, &my_info, &pos, sgp4_ok);
 		fclose(log_file);
 	} else {
 		printf("Can't open the log file.\n");
+	}
+
+	double time_offset_minutes = 0.0;	// time flow
+	
+	printf("Starting real-time simulation (Press Ctrl + C to exit)\n");
+	sleep(1);
+
+	while(1) {
+		printf("\033[2J\033[3J\033[H");			// clear the screen
+
+		get_current_time_str(time_str, sizeof(time_str));	// current time
+		my_info.Data_Age_hours += (1.0 / 3600.0);			// current time + time
+		update_satellite(&my_satellite, &my_info, &pos, &sgp4_ok);	// re calculation
+
+		print_satellite_info(stdout, time_str, &my_satellite, &my_info, &pos, sgp4_ok);
+
+		fflush(stdout);
+		sleep(1);
 	}
 }
 

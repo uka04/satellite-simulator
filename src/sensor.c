@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <ncurses.h>
 #include "sensor.h"
 
 int is_tle_file(const char *filename) {
@@ -159,43 +160,102 @@ void calculate_more_info(const SatelliteData *tle, SatelliteMoreInfo *out_info) 
 	out_info->Data_Age_hours = age_in_seconds / 3600.0;
 }
 
-void check_event_system(const SatellitePosition *pos, const SatelliteMoreInfo *info, double current_speed, double prev_speed) {
-	printf("\n-- [Event System Log] --\n");
+void check_event_system(const SatellitePosition *pos, const SatelliteMoreInfo *info, 
+double current_speed, double prev_speed, int start_y) {
+	mvprintw(start_y, 0, "[Event System Log] --");
 	int event_triggered = 0;
+	int cur_y = start_y + 1;
 	
 	// altitude
 	if (pos->alt < 150.0) {
-		printf("\033[1;31m[CRITICAL] REENTRY RISK: Satellite collaspsing! (%.2f km)!\033[0m\n", pos->alt);
+		attron(COLOR_PAIR(1) | A_BOLD);
+		mvprintw(cur_y++, 0, "[CRITICAL] REENTRY RISK: Satellite collaspsing! (%.2f km)!\033[0m\n", pos->alt);
+		attroff(COLOR_PAIR(1) | A_BOLD);
 		event_triggered = 1;
 	} else if (pos->alt < 350.0) {
-		printf("\033[1;33m[WARNING] High atmospheric drag. Low altitude. (%.2f km).\033[0m\n", pos->alt);
+		attron(COLOR_PAIR(2) | A_BOLD);
+		mvprintw(cur_y++, 0, "[WARNING] High atmospheric drag. Low altitude. (%.2f km).\033[0m\n", pos->alt);
+		attroff(COLOR_PAIR(2) | A_BOLD);
 		event_triggered = 1;
 	}
 
 	// speed 
 	if (prev_speed > 0.0 && fabs(current_speed - prev_speed) > 0.005) {
-		printf("\033[1;33m[ALERT] ORBIT CHANGED: Speed maneuver detected! (Delta V: %.4f km/s)\033[0m\n", fabs(current_speed - prev_speed));
-        event_triggered = 1;
+		attron(COLOR_PAIR(2) | A_BOLD);
+		mvprintw(cur_y++, 0, "[ALERT] ORBIT CHANGED: Speed maneuver detected! (Delta V: %.4f km/s)", fabs(current_speed - prev_speed));
+        attroff(COLOR_PAIR(2) | A_BOLD);
+		event_triggered = 1;
 	}
 
 	// old epoch
 	if (info->Data_Age_hours > 72.0) {
-        printf("\033[1;33m[WARNING] UPDATE TLE: Satellite data is old (%.1f hours ago). Update required.\033[0m\n", info->Data_Age_hours);
-        event_triggered = 1;
+		attron(COLOR_PAIR(2) | A_BOLD);
+        mvprintw(cur_y++, 0, "[WARNING] UPDATE TLE: Satellite data is old (%.1f hours ago). Update required.", info->Data_Age_hours);
+        attroff(COLOR_PAIR(2) | A_BOLD);
+		event_triggered = 1;
     }
 
 	// in polar
 	if (fabs(pos->lat) > 80.0) {
-		printf("\n033[1;32m[INFO] POLAR PASS: Passing over the polar region (Lat: %.2f deg).\033[0m\n", pos->lat);
+		attron(COLOR_PAIR(3) | A_BOLD);
+		mvprintw(cur_y++, 0, "[INFO] POLAR PASS: Passing over the polar region (Lat: %.2f deg)", pos->lat);
+		attroff(COLOR_PAIR(3) | A_BOLD);
 		event_triggered = 1;
 	}
 
 	// no event
 	if (!event_triggered) {
-        printf("[INFO] No special events.\n");
+        mvprintw(cur_y++, 0, "[INFO] No special events.");
     }
-	printf("-------------------\n");
+	mvprintw(cur_y, 0, "-------------------");
 }
 
+void print_satellite_info(FILE *stream, const char *time_str, const SatelliteData *tle, 
+                          const SatelliteMoreInfo *info, const SatellitePosition *pos, int sgp4_ok) {
+    if (stream == NULL) return;
+    fprintf(stream, "[%s]\n", time_str);
+    fprintf(stream, "==== Satellite Control Simulator ====\n");
+    fprintf(stream, "Satellite Name : %s\n\n", tle->name);
 
+    // line 2
+    fprintf(stream, "-- Line 2 Info --\n");
+    fprintf(stream, "Norad Id       : %d\n", tle->NoradId);
+    fprintf(stream, "Classification : %s\n", tle->Classification);
+    fprintf(stream, "CosparId       : %s\n", tle->CosparId);
+    fprintf(stream, "Epoch_Year     : %d\n", tle->Epoch_Year);
+    fprintf(stream, "Epoch_Day      : %f\n", tle->Epoch_Day);
+    fprintf(stream, "Decay Rate1    : %f\n", tle->Decay_Rate1);
+    fprintf(stream, "Decay Rate2    : %f\n", tle->Decay_Rate2);
+    fprintf(stream, "Bstar          : %.8f\n\n", tle->Bstar);
+
+    // line 3
+    fprintf(stream, "-- Line 3 Info --\n");
+    fprintf(stream, "Inclination       : %.4f\n", tle->Inclination);
+    fprintf(stream, "Raan              : %.4f\n", tle->Raan);
+    fprintf(stream, "Eccentricity      : %.7f\n", tle->Eccentricity);
+    fprintf(stream, "Perigee           : %.4f\n", tle->Perigee);
+    fprintf(stream, "Mean_Anomaly      : %.4f\n", tle->Mean_Anomaly);
+    fprintf(stream, "Mean_Motion       : %.8f orbits/day\n", tle->Mean_Motion);
+    fprintf(stream, "Revolution_Number : %d\n\n", tle->Revolution_Number);
+
+    if (sgp4_ok) {
+        fprintf(stream, "-- SGP4 Real-time Position --\n");
+        fprintf(stream, "Latitude      : %.4f deg\n", pos->lat);
+        fprintf(stream, "Longtitude    : %.4f deg\n", pos->lon);
+        fprintf(stream, "Altitude      : %.2f km\n", pos->alt);
+        fprintf(stream, "Speed         : %.2f km/s\n\n", sqrt(pos->vx*pos->vx + pos->vy*pos->vy + pos->vz*pos->vz));
+    } else {
+        fprintf(stream, "SGP4 Calculation Failed.\n\n");
+    }
+
+    // more Info
+    fprintf(stream, "-- More Info --\n");
+    fprintf(stream, "Day_Distance_km   : Around %f\n", info->Day_Distance_km);
+    fprintf(stream, "Period_min        : Around %f\n", info->Period_min);
+    fprintf(stream, "Data Age          : %.2f hours ago\n", info->Data_Age_hours);
+
+    if (stream != stdout) {
+        fprintf(stream, "------------------------------------\n");
+    }
+}
 

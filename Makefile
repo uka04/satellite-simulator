@@ -4,6 +4,8 @@ CXX = g++
 CFLAGS = -Iinclude -Wall
 CXXFLAGS = -Iinclude -Wall
 
+LDFLAGS = -lm -lncurses
+
 TARGET = satellite_sim
 
 C_OBJS = main.o sensor.o
@@ -12,7 +14,7 @@ CPP_OBJS = sgp4_wrapper.o sgp4unit.o sgp4ext.o
 all: $(TARGET)
 
 $(TARGET): $(C_OBJS) $(CPP_OBJS)
-	$(CXX) -o $(TARGET) $(C_OBJS) $(CPP_OBJS) -lm
+	$(CXX) -o $(TARGET) $(C_OBJS) $(CPP_OBJS) $(LDFLAGS)
 
 main.o: src/main.c
 	$(CC) $(CFLAGS) -c src/main.c

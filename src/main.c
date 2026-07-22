@@ -4,6 +4,7 @@
 #include <dirent.h>
 #include <math.h>
 #include <unistd.h>
+#include <ncurses.h>
 #include "sensor.h"
 
 #define MAX_SATELLITES 20
@@ -23,53 +24,49 @@ void update_satellite(const SatelliteData *tle, const SatelliteMoreInfo *info,
 		*out_sgp4_ok = get_satellite_position(tle, minutes_past_epoch, out_pos);
 }
 
-void print_satellite_info(FILE *stream, const char *time_str, const SatelliteData *tle, 
+void display_satellite_info_ncurses(const char *time_str, const SatelliteData *tle, 
 const SatelliteMoreInfo *info, const SatellitePosition *pos, int sgp4_ok) {
-	if (stream == NULL) return;
-	fprintf(stream, "[%s]\n", time_str);
-    fprintf(stream, "==== Satellite Control Simulator ====\n");
-    fprintf(stream, "Satellite Name : %s\n\n", tle->name);
+	
+	mvprintw(0, 0, "[%s]", time_str);
+    mvprintw(1, 0, "==== Satellite Control Simulator ====");
+    mvprintw(2, 0, "Satellite Name : %s", tle->name);
 
 	// line 2
-	fprintf(stream, "-- Line 2 Info --\n");
-	fprintf(stream, "Norad Id       : %d\n", tle->NoradId);
-	fprintf(stream, "Classification : %s\n", tle->Classification);
-	fprintf(stream, "CosparId       : %s\n", tle->CosparId);
-	fprintf(stream, "Epoch_Year     : %d\n", tle->Epoch_Year);
-	fprintf(stream, "Epoch_Day      : %f\n", tle->Epoch_Day);
-	fprintf(stream, "Decay Rate1    : %f\n", tle->Decay_Rate1);
-	fprintf(stream, "Decay Rate2    : %f\n", tle->Decay_Rate2);
-	fprintf(stream, "Bstar          : %.8f\n\n", tle->Bstar);
+	mvprintw(4, 0, "-- Line 2 Info --");
+	mvprintw(5, 0, "Norad Id       : %d", tle->NoradId);
+	mvprintw(6, 0, "Classification : %s", tle->Classification);
+	mvprintw(7, 0, "CosparId       : %s", tle->CosparId);
+	mvprintw(8, 0, "Epoch_Year     : %d", tle->Epoch_Year);
+	mvprintw(9, 0, "Epoch_Day      : %f", tle->Epoch_Day);
+	mvprintw(10, 0, "Decay Rate1    : %f", tle->Decay_Rate1);
+	mvprintw(11, 0, "Decay Rate2    : %f", tle->Decay_Rate2);
+	mvprintw(12, 0, "Bstar          : %.8f", tle->Bstar);
 
 	// line 3
-	fprintf(stream, "-- Line 3 Info --\n");
-	fprintf(stream, "Inclination       : %.4f\n", tle->Inclination);
-	fprintf(stream, "Raan              : %.4f\n", tle->Raan);
-	fprintf(stream,"Eccentricity      : %.7f\n", tle->Eccentricity);
-	fprintf(stream, "Perigee           : %.4f\n", tle->Perigee);
-	fprintf(stream, "Mean_Anomaly      : %.4f\n", tle->Mean_Anomaly);
-    fprintf(stream, "Mean_Motion       : %.8f orbits/day\n", tle->Mean_Motion);
-	fprintf(stream, "Revolution_Number : %d\n\n", tle->Revolution_Number);
+	mvprintw(14, 0, "-- Line 3 Info --");
+	mvprintw(15, 0, "Inclination       : %.4f", tle->Inclination);
+	mvprintw(16, 0, "Raan              : %.4f", tle->Raan);
+	mvprintw(17, 0,"Eccentricity      : %.7f", tle->Eccentricity);
+	mvprintw(18, 0, "Perigee           : %.4f", tle->Perigee);
+	mvprintw(19, 0, "Mean_Anomaly      : %.4f", tle->Mean_Anomaly);
+    mvprintw(20, 0, "Mean_Motion       : %.8f orbits/day", tle->Mean_Motion);
+	mvprintw(21, 0, "Revolution_Number : %d", tle->Revolution_Number);
 
 	if (sgp4_ok) {
-		fprintf(stream, "-- SGP4 Real-time Position --\n");
-		fprintf(stream, "Latitude      : %.4f deg\n", pos->lat);
-		fprintf(stream, "Longtitude    : %.4f deg\n", pos->lon);
-		fprintf(stream, "Altitude      : %.2f km\n", pos->alt);
-		fprintf(stream, "Speed         : %.2f km/s\n\n",sqrt(pos->vx*pos->vx + pos->vy*pos->vy + pos->vz*pos->vz));
+		mvprintw(23, 0, "-- SGP4 Real-time Position --");
+		mvprintw(24, 0, "Latitude      : %.4f deg", pos->lat);
+		mvprintw(25, 0, "Longtitude    : %.4f deg", pos->lon);
+		mvprintw(26, 0, "Altitude      : %.2f km", pos->alt);
+		mvprintw(27, 0, "Speed         : %.2f km/s",sqrt(pos->vx*pos->vx + pos->vy*pos->vy + pos->vz*pos->vz));
 	} else {
-		fprintf(stream, "SGP4 Calculation Failed.\n\n");
+		mvprintw(23, 0, "SGP4 Calculation Failed.");
 	}
 
 	// more Info
-	fprintf(stream, "-- More Info --\n");
-	fprintf(stream, "Day_Distance_km   : Around %f\n", info->Day_Distance_km);
-	fprintf(stream, "Period_min        : Around %f\n", info->Period_min);
-	fprintf(stream, "Data Age          : %.2f hours ago\n", info->Data_Age_hours);
-
-	if (stream != stdout) {
-		fprintf(stream, "------------------------------------\n");
-	}
+	mvprintw(29, 0, "-- More Info --");
+	mvprintw(30, 0, "Day_Distance_km   : Around %f", info->Day_Distance_km);
+	mvprintw(31, 0, "Period_min        : Around %f", info->Period_min);
+	mvprintw(32, 0, "Data Age          : %.2f hours ago", info->Data_Age_hours);
 }
 
 void run_simulator(const char *file_path) {
@@ -99,33 +96,48 @@ void run_simulator(const char *file_path) {
 	} else {
 		printf("Can't open the log file.\n");
 	}
-
-	double time_offset_minutes = 0.0;	// time flow
 	
-	printf("Starting real-time simulation (Press Ctrl + C to exit)\n");
-	sleep(1);
+	// init ncurses
+	initscr();
+	cbreak();
+	noecho();
+	curs_set(0);
+	timeout(1000);
+	start_color();
+
+	init_pair(1, COLOR_RED, COLOR_BLACK);
+	init_pair(2, COLOR_YELLOW, COLOR_BLACK);
+	init_pair(3, COLOR_GREEN, COLOR_BLACK);
 
 	while(1) {
-		printf("\033[2J\033[3J\033[H");			// clear the screen
+		clear();			// clear the screen
 
 		get_current_time_str(time_str, sizeof(time_str));	// current time
 		my_info.Data_Age_hours += (1.0 / 3600.0);			// current time + time
 		update_satellite(&my_satellite, &my_info, &pos, &sgp4_ok);	// re calculation
 
-		print_satellite_info(stdout, time_str, &my_satellite, &my_info, &pos, sgp4_ok);
+		display_satellite_info_ncurses(time_str, &my_satellite, &my_info, &pos, sgp4_ok);
 
 		// calculate speed
         if (sgp4_ok) {
             current_speed = sqrt(pos.vx*pos.vx + pos.vy*pos.vy + pos.vz*pos.vz);
             
-            check_event_system(&pos, &my_info, current_speed, prev_speed);
+            check_event_system(&pos, &my_info, current_speed, prev_speed, 34);
             
             prev_speed = current_speed;
         }
 			
-		fflush(stdout);
-		sleep(1);
+		mvprintw(42, 0, "[Press 'q' to exit]");
+		refresh();
+
+		int ch = getch();
+		if (ch == 'q' || ch == 'Q') {
+			break;
+		}
 	}
+
+	// end ncurses
+	endwin();
 }
 
 int main() {

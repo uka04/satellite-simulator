@@ -428,3 +428,101 @@ Day_Distance_km   : Around 650540.505720
 Period_min        : Around 92.968846
 Data Age          : 382.25 hours ago
 ------------------------------------
+[2026-07-22 09:41:33]
+==== Satellite Control Simulator ====
+Satellite Name : ISS (ZARYA)             
+
+-- Line 2 Info --
+Norad Id       : 25544
+Classification : U
+CosparId       : 98067A  
+Epoch_Year     : 26
+Epoch_Day      : 186.443766
+Decay Rate1    : 0.000089
+Decay Rate2    : 0.000000
+Bstar          : 0.00017013
+
+-- Line 3 Info --
+Inclination       : 51.6303
+Raan              : 209.7275
+Eccentricity      : 0.0006727
+Perigee           : 258.7638
+Mean_Anomaly      : 101.2595
+Mean_Motion       : 15.48905966 orbits/day
+Revolution_Number : 57458
+
+-- SGP4 Real-time Position --
+Latitude      : -28.3542 deg
+Longtitude    : 100.4547 deg
+Altitude      : 418.01 km
+Speed         : 7.66 km/s
+
+-- More Info --
+Day_Distance_km   : Around 650540.505720
+Period_min        : Around 92.968846
+Data Age          : 407.04 hours ago
+------------------------------------
+[2026-07-22 09:43:03]
+==== Satellite Control Simulator ====
+Satellite Name : STARLINK-37881          
+
+-- Line 2 Info --
+Norad Id       : 69547
+Classification : U
+CosparId       : 26135B  
+Epoch_Year     : 26
+Epoch_Day      : 193.833356
+Decay Rate1    : -0.028464
+Decay Rate2    : 0.000000
+Bstar          : 0.05374300
+
+-- Line 3 Info --
+Inclination       : 97.2842
+Raan              : 222.2019
+Eccentricity      : 0.0001408
+Perigee           : 58.9153
+Mean_Anomaly      : 275.7603
+Mean_Motion       : 15.52294219 orbits/day
+Revolution_Number : 542
+
+SGP4 Calculation Failed.
+
+-- More Info --
+Day_Distance_km   : Around 651963.571980
+Period_min        : Around 92.765919
+Data Age          : 229.72 hours ago
+------------------------------------
+[2026-07-22 09:43:21]
+==== Satellite Control Simulator ====
+Satellite Name : ISS (ZARYA)             
+
+-- Line 2 Info --
+Norad Id       : 25544
+Classification : U
+CosparId       : 98067A  
+Epoch_Year     : 26
+Epoch_Day      : 186.443766
+Decay Rate1    : 0.000089
+Decay Rate2    : 0.000000
+Bstar          : 0.00017013
+
+-- Line 3 Info --
+Inclination       : 51.6303
+Raan              : 209.7275
+Eccentricity      : 0.0006727
+Perigee           : 258.7638
+Mean_Anomaly      : 101.2595
+Mean_Motion       : 15.48905966 orbits/day
+Revolution_Number : 57458
+
+-- SGP4 Real-time Position --
+Latitude      : -23.3057 deg
+Longtitude    : 105.8055 deg
+Altitude      : 417.69 km
+Speed         : 7.66 km/s
+
+-- More Info --
+Day_Distance_km   : Around 650540.505720
+Period_min        : Around 92.968846
+Data Age          : 407.07 hours ago
+------------------------------------

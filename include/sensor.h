@@ -53,7 +53,11 @@ void update_satellite(const SatelliteData *tle, const SatelliteMoreInfo *info,
 void print_satellite_info(FILE *stream, const char *time_str, const SatelliteData *tle, 
 							const SatelliteMoreInfo *info, const SatellitePosition *pos, int sgp4_ok);
 
-void check_event_system(const SatellitePosition *pos, const SatelliteMoreInfo *info, double current_speed, double prev_speed);
+void display_satellite_info_ncurses(const char *time_str, const SatelliteData *tle, 
+const SatelliteMoreInfo *info, const SatellitePosition *pos, int sgp4_ok);
+
+void check_event_system(const SatellitePosition *pos, const SatelliteMoreInfo *info, 
+double current_speed, double prev_speed, int start_y);
 
 void run_simulator(const char *file_path);
 

@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <ncurses.h>
 #include "sensor.h"
+#include "protocol.h"
 
 #define MAX_SATELLITES 20
 #define PATH_LENGTH 300

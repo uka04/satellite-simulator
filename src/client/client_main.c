@@ -8,8 +8,8 @@
 #include "sensor.h"
 #include "protocol.h"
 
-void dispaly_ui(const SatellitePacket *pkt) {
-	mvprintw(0, 0, "[%s]", time_str);
+void display_ui(const SatellitePacket *pkt) {
+	mvprintw(0, 0, "[%s]", pkt->time_str);
     mvprintw(1, 0, "==== Satellite Control Simulator ====");
     mvprintw(2, 0, "Satellite Name : %s", pkt->tle.name);
 
@@ -34,7 +34,7 @@ void dispaly_ui(const SatellitePacket *pkt) {
     mvprintw(20, 0, "Mean_Motion       : %.8f orbits/day", pkt->tle.Mean_Motion);
 	mvprintw(21, 0, "Revolution_Number : %d", pkt->tle.Revolution_Number);
 
-	if (sgp4_ok) {
+	if (pkt->sgp4_ok) {
 		mvprintw(23, 0, "-- SGP4 Real-time Position --");
 		mvprintw(24, 0, "Latitude      : %.4f deg", pkt->pos.lat);
 		mvprintw(25, 0, "Longtitude    : %.4f deg", pkt->pos.lon);
@@ -59,12 +59,12 @@ void check_event_system(const SatellitePacket *pkt, int start_y) {
 	// altitude
 	if (pkt->pos.alt < 150.0) {
 		attron(COLOR_PAIR(1) | A_BOLD);
-		mvprintw(cur_y++, 0, "[CRITICAL] REENTRY RISK: Satellite collaspsing! (%.2f km)!\033[0m\n", pos->alt);
+		mvprintw(cur_y++, 0, "[CRITICAL] REENTRY RISK: Satellite collaspsing! (%.2f km)!\033[0m\n", pkt->pos.alt);
 		attroff(COLOR_PAIR(1) | A_BOLD);
 		event_triggered = 1;
 	} else if (pkt->pos.alt < 350.0) {
 		attron(COLOR_PAIR(2) | A_BOLD);
-		mvprintw(cur_y++, 0, "[WARNING] High atmospheric drag. Low altitude. (%.2f km).\033[0m\n", pos->alt);
+		mvprintw(cur_y++, 0, "[WARNING] High atmospheric drag. Low altitude. (%.2f km).\033[0m\n", pkt->pos.alt);
 		attroff(COLOR_PAIR(2) | A_BOLD);
 		event_triggered = 1;
 	}
@@ -72,7 +72,7 @@ void check_event_system(const SatellitePacket *pkt, int start_y) {
 	// speed 
 	if (pkt->delta_v > 0.005) {
 		attron(COLOR_PAIR(2) | A_BOLD);
-		mvprintw(cur_y++, 0, "[ALERT] ORBIT CHANGED: Speed maneuver detected! (Delta V: %.4f km/s)", fabs(current_speed - prev_speed));
+		mvprintw(cur_y++, 0, "[ALERT] ORBIT CHANGED: Speed maneuver detected! (Delta V: %.4f km/s)", pkt->delta_v);
         attroff(COLOR_PAIR(2) | A_BOLD);
 		event_triggered = 1;
 	}
@@ -80,7 +80,7 @@ void check_event_system(const SatellitePacket *pkt, int start_y) {
 	// old epoch
 	if (pkt->info.Data_Age_hours > 72.0) {
 		attron(COLOR_PAIR(2) | A_BOLD);
-        mvprintw(cur_y++, 0, "[WARNING] UPDATE TLE: Satellite data is old (%.1f hours ago). Update required.", info->Data_Age_hours);
+        mvprintw(cur_y++, 0, "[WARNING] UPDATE TLE: Satellite data is old (%.1f hours ago). Update required.", pkt->info.Data_Age_hours);
         attroff(COLOR_PAIR(2) | A_BOLD);
 		event_triggered = 1;
     }
@@ -88,7 +88,7 @@ void check_event_system(const SatellitePacket *pkt, int start_y) {
 	// in polar
 	if (fabs(pkt->pos.lat) > 80.0) {
 		attron(COLOR_PAIR(3) | A_BOLD);
-		mvprintw(cur_y++, 0, "[INFO] POLAR PASS: Passing over the polar region (Lat: %.2f deg)", pos->lat);
+		mvprintw(cur_y++, 0, "[INFO] POLAR PASS: Passing over the polar region (Lat: %.2f deg)", pkt->pos.lat);
 		attroff(COLOR_PAIR(3) | A_BOLD);
 		event_triggered = 1;
 	}

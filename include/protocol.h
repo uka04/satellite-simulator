@@ -1,7 +1,7 @@
 #ifndef	PROTOCOL_H
 #define PROTOCOL_H
 
-#define PORT 8080
+#define SERVER_PORT 8080
 
 // network communication packet
 typedef struct {

@@ -1,35 +1,48 @@
 CC = gcc
 CXX = g++
 
-CFLAGS = -Iinclude -Wall
-CXXFLAGS = -Iinclude -Wall
-
+CFLAGS = -Wall -Wextra -Iinclude -O2
+CXXFLAGS = -Wall -Wextra -Iinclude -O2
 LDFLAGS = -lm -lncurses
 
-TARGET = satellite_sim
+BIN_DIR = bin
+LOG_DIR = logs
 
-C_OBJS = main.o sensor.o
-CPP_OBJS = sgp4_wrapper.o sgp4unit.o sgp4ext.o
+SERVER_BIN = $(BIN_DIR)/satellite_server
+CLIENT_BIN = $(BIN_DIR)/satellite_client
 
-all: $(TARGET)
+SGP4_SRCS   = src/sgp4/sgp4ext.cpp src/sgp4/sgp4unit.cpp src/sgp4/sgp4_wrapper.cpp
+COMMON_SRCS = src/common/sensor.c
 
-$(TARGET): $(C_OBJS) $(CPP_OBJS)
-	$(CXX) -o $(TARGET) $(C_OBJS) $(CPP_OBJS) $(LDFLAGS)
+SERVER_SRCS = src/server/server_main.c $(COMMON_SRCS)
+CLIENT_SRCS = src/client/client_main.c $(COMMON_SRCS)
 
-main.o: src/main.c
-	$(CC) $(CFLAGS) -c src/main.c
+SGP4_OBJS   = $(SGP4_SRCS:.cpp=.o)
+SERVER_OBJS = $(SERVER_SRCS:.c=.o) $(SGP4_OBJS)
+CLIENT_OBJS = $(CLIENT_SRCS:.c=.o)
 
-sensor.o: src/sensor.c
-	$(CC) $(CFLAGS) -c src/sensor.c
+all: create_dirs $(SERVER_BIN) $(CLIENT_BIN)
 
-sgp4_wrapper.o: src/sgp4_wrapper.cpp
-	$(CXX) $(CXXFLAGS) -c src/sgp4_wrapper.cpp
+create_dirs:
+	@mkdir -p $(BIN_DIR) $(LOG_DIR)
 
-sgp4unit.o: src/sgp4unit.cpp
-	$(CXX) $(CXXFLAGS) -c src/sgp4unit.cpp
+$(SERVER_BIN): $(SERVER_OBJS)
+	$(CXX) $^ -o $@ $(LDFLAGS)
+	@echo "Server Build Complete: $@"
 
-sgp4ext.o: src/sgp4ext.cpp
-	$(CXX) $(CXXFLAGS) -c src/sgp4ext.cpp
+$(CLIENT_BIN): $(CLIENT_OBJS)
+	$(CC) $^ -o $@ $(LDFLAGS)
+	@echo "Client Build Complete: $@"
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -f *.o $(TARGET)
+	rm -f src/*.o src/*/*.o src/sgp4/*.o
+	rm -rf $(BIN_DIR)
+	@echo "Cleaned all object and binary files."
+
+.PHONY: all clean create_dirs

@@ -160,56 +160,6 @@ void calculate_more_info(const SatelliteData *tle, SatelliteMoreInfo *out_info) 
 	out_info->Data_Age_hours = age_in_seconds / 3600.0;
 }
 
-void check_event_system(const SatellitePosition *pos, const SatelliteMoreInfo *info, 
-double current_speed, double prev_speed, int start_y) {
-	mvprintw(start_y, 0, "[Event System Log] --");
-	int event_triggered = 0;
-	int cur_y = start_y + 1;
-	
-	// altitude
-	if (pos->alt < 150.0) {
-		attron(COLOR_PAIR(1) | A_BOLD);
-		mvprintw(cur_y++, 0, "[CRITICAL] REENTRY RISK: Satellite collaspsing! (%.2f km)!\033[0m\n", pos->alt);
-		attroff(COLOR_PAIR(1) | A_BOLD);
-		event_triggered = 1;
-	} else if (pos->alt < 350.0) {
-		attron(COLOR_PAIR(2) | A_BOLD);
-		mvprintw(cur_y++, 0, "[WARNING] High atmospheric drag. Low altitude. (%.2f km).\033[0m\n", pos->alt);
-		attroff(COLOR_PAIR(2) | A_BOLD);
-		event_triggered = 1;
-	}
-
-	// speed 
-	if (prev_speed > 0.0 && fabs(current_speed - prev_speed) > 0.005) {
-		attron(COLOR_PAIR(2) | A_BOLD);
-		mvprintw(cur_y++, 0, "[ALERT] ORBIT CHANGED: Speed maneuver detected! (Delta V: %.4f km/s)", fabs(current_speed - prev_speed));
-        attroff(COLOR_PAIR(2) | A_BOLD);
-		event_triggered = 1;
-	}
-
-	// old epoch
-	if (info->Data_Age_hours > 72.0) {
-		attron(COLOR_PAIR(2) | A_BOLD);
-        mvprintw(cur_y++, 0, "[WARNING] UPDATE TLE: Satellite data is old (%.1f hours ago). Update required.", info->Data_Age_hours);
-        attroff(COLOR_PAIR(2) | A_BOLD);
-		event_triggered = 1;
-    }
-
-	// in polar
-	if (fabs(pos->lat) > 80.0) {
-		attron(COLOR_PAIR(3) | A_BOLD);
-		mvprintw(cur_y++, 0, "[INFO] POLAR PASS: Passing over the polar region (Lat: %.2f deg)", pos->lat);
-		attroff(COLOR_PAIR(3) | A_BOLD);
-		event_triggered = 1;
-	}
-
-	// no event
-	if (!event_triggered) {
-        mvprintw(cur_y++, 0, "[INFO] No special events.");
-    }
-	mvprintw(cur_y, 0, "-------------------");
-}
-
 void print_satellite_info(FILE *stream, const char *time_str, const SatelliteData *tle, 
                           const SatelliteMoreInfo *info, const SatellitePosition *pos, int sgp4_ok) {
     if (stream == NULL) return;

@@ -25,9 +25,9 @@ void run_server(const char *file_path) {
 
 	server_fd = socket(AF_INET, SOCK_STREAM, 0);
 	int opt = 1;
-	setsockopt(sever_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+	setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 
-	server_addr.sin_family = AF_INET	// ipv4
+	server_addr.sin_family = AF_INET;	// ipv4
 	server_addr.sin_addr.s_addr = INADDR_ANY;
 	server_addr.sin_port = htons(SERVER_PORT);
 
@@ -44,19 +44,19 @@ void run_server(const char *file_path) {
 	if (!read_tle_data(file_path, &packet.tle)) {
 		printf("Error: Failed to read TLE data.\n");
 		close(client_fd);
-		continue;
+		return;
 	}
 
 	calculate_more_info(&packet.tle, &packet.info);
 	double prev_speed = 0.0;
 
 	while (1) {
-		get_current_time_str(time_str, sizeof(time_str));	// current time
+		get_current_time_str(packet.time_str, sizeof(packet.time_str));	// current time
 		packet.info.Data_Age_hours += (1.0 / 3600.0);			// current time + time
 		update_satellite(&packet.tle, &packet.info, &packet.pos, &packet.sgp4_ok);	// re calculation
 
 		if (packet.sgp4_ok) {
-			packet.current_speed = sqrt(packet.pos.vx*packet.pos.vx + packet.pos.vy*packet.pos.vy + packetpos..vz*packet.pos.vz);
+			packet.current_speed = sqrt(packet.pos.vx*packet.pos.vx + packet.pos.vy*packet.pos.vy + packet.pos.vz*packet.pos.vz);
             packet.delta_v = (prev_speed > 0.0) ? fabs(packet.current_speed - prev_speed) : 0.0;
             prev_speed = packet.current_speed;
 		}

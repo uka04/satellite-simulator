@@ -3,7 +3,9 @@
 #include "sgp4unit.h"
 #include "sgp4ext.h"
 
-extern "C" int get_satellite_position(const SatelliteData *tle, double minutes_past_epoch, SatellitePosition *out_pos) {
+extern "C" {
+
+int get_satellite_position(const SatelliteData *tle, double minutes_past_epoch, SatellitePosition *out_pos) {
 	elsetrec satrec;
 
 	double deg2rad = M_PI / 180.0;	// radian
@@ -36,4 +38,14 @@ extern "C" int get_satellite_position(const SatelliteData *tle, double minutes_p
 	out_pos->lon = atan2(ro[1], ro[0]) * (180.0 / M_PI);
 
 	return 1;
+}
+
+void update_satellite(const SatelliteData *tle, const SatelliteMoreInfo *info,
+							SatellitePosition *out_pos, int *out_sgp4_ok) {
+		// SGP4 Info
+		double minutes_past_epoch = info->Data_Age_hours * 60.0;
+		// result of calculation
+		*out_sgp4_ok = get_satellite_position(tle, minutes_past_epoch, out_pos);
+}
+
 }

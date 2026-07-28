@@ -18,7 +18,58 @@ void get_current_time_str(char *buffer, int max_size) {
 	strftime(buffer, max_size, "%Y-%m-%d %H:%M:%S", time_info);
 }
 
-void run_server(const char *file_path) {
+void evaluate_status(const SatellitePacket *pkt, SatelliteSummary *sum) {
+	sum->status = STATUS_NORMAL;
+    snprintf(sum->status_msg, sizeof(sum->status_msg), "NORMAL");
+
+    // Critical 
+    if (pkt->pos.alt < 150.0) {
+        sum->status = STATUS_CRITICAL;
+        snprintf(sum->status_msg, sizeof(sum->status_msg), "CRITICAL");
+        return;
+    }
+
+    // Warning 
+    if (pkt->pos.alt < 350.0 || pkt->delta_v > 0.005 || pkt->info.Data_Age_hours > 72.0) {
+        sum->status = STATUS_WARNING;
+        snprintf(sum->status_msg, sizeof(sum->status_msg), "WARNING");
+    }
+}
+
+int main() {
+	SatellitePacket sat_list[MAX_SATELLITES];
+	double prev_speeds[MAX_SATELLITES] = {0.0};
+	int sat_count = 0;
+
+	DIR *dir = opendir("data");
+	if (dir == NULL) {
+		printf("can't open the diretory");
+		return 1;
+	}
+
+	struct dirent *entry;
+	while ((entry = readdir(dir)) != NULL && sat_count < MAX_SATELLITES) {
+		if (entry->d_type == DT_REG && is_tle_file(entry->d_name)) {
+			char file_path[PATH_LENGTH];
+			snprintf(file_path, sizeof(file_path), "data/%s", entry->d_name);
+
+			memset(&sat_list[sat_count], 0, sizeof(SatellitePacket)); //init SatellitePacket
+			if (read_tle_data(file_path, &sat_list[sat_count].tle)) {
+				calculate_more_info(&sat_list[sat_count].tle, &sat_list[sat_count].info);
+				sat_count++;
+			}
+		}
+	}
+	closedir(dir);
+
+	if (sat_count == 0) {
+		printf("No valid TLE files found in 'data/'\n");
+		return 1;
+	}
+
+	// socket communication
+	printf("==== List of Satellite ====\n");
+
 	int server_fd, client_fd;
 	struct sockaddr_in server_addr, client_addr;
 	socklen_t addr_len = sizeof(client_addr);
@@ -38,38 +89,55 @@ void run_server(const char *file_path) {
 	client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &addr_len);
 	printf("[Server] Client Connected!\n");
 
-	SatellitePacket packet;
-	memset(&packet, 0, sizeof(packet));
+	struct timeval tv = {0, 100000};
+	setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&tv, sizeof(tv));
 
-	if (!read_tle_data(file_path, &packet.tle)) {
-		printf("Error: Failed to read TLE data.\n");
-		close(client_fd);
-		return;
-	}
-
-	calculate_more_info(&packet.tle, &packet.info);
-	double prev_speed = 0.0;
+	ClientRequest req = { REQ_ALL_SUMMARY, 0 }; // reauesting all List, default
 
 	while (1) {
-		get_current_time_str(packet.time_str, sizeof(packet.time_str));	// current time
-		packet.info.Data_Age_hours += (1.0 / 3600.0);			// current time + time
-		update_satellite(&packet.tle, &packet.info, &packet.pos, &packet.sgp4_ok);	// re calculation
+		char current_time[30];
+		get_current_time_str(current_time, sizeof(current_time));	// current time
 
-		if (packet.sgp4_ok) {
-			packet.current_speed = sqrt(packet.pos.vx*packet.pos.vx + packet.pos.vy*packet.pos.vy + packet.pos.vz*packet.pos.vz);
-            packet.delta_v = (prev_speed > 0.0) ? fabs(packet.current_speed - prev_speed) : 0.0;
-            prev_speed = packet.current_speed;
+		for (int i = 0; i < sat_count; i++) {
+			strcpy(sat_list[i].time_str, current_time);
+			sat_list[i].info.Data_Age_hours += (1.0 / 3600.0);		// current time + time
+			update_satellite(&sat_list[i].tle, &sat_list[i].info, &sat_list[i].pos, &sat_list[i].sgp4_ok);	// re calculation
+			
+			if (sat_list[i].sgp4_ok) {
+				sat_list[i].current_speed = sqrt(sat_list[i].pos.vx * sat_list[i].pos.vx + 
+												 sat_list[i].pos.vy * sat_list[i].pos.vy + 
+												 sat_list[i].pos.vz * sat_list[i].pos.vz);
+				sat_list[i].delta_v = (prev_speeds[i] > 0.0) ? fabs(sat_list[i].current_speed - prev_speeds[i]) : 0.0;
+				prev_speeds[i] = sat_list[i].current_speed;
+			}
 		}
 
-		FILE *log_file = fopen("logs/satellite.log", "a");
-		if (log_file) {
-			print_satellite_info(log_file, packet.time_str, &packet.tle, &packet.info, &packet.pos, packet.sgp4_ok);
-			fclose(log_file);
+		// read client's request
+		ClientRequest new_req;
+		if (recv(client_fd, &new_req, sizeof(ClientRequest), 0) > 0) {
+			req = new_req;	// update new request
 		}
 
-		if (send(client_fd, &packet, sizeof(SatellitePacket), 0) <= 0) {
-			printf("[Server] Client disconnected.\n");
-			break;
+		// response to client request
+		if (req.type == REQ_ALL_SUMMARY) {
+			AllSatellitesPacket all_pkt;
+			strcpy(all_pkt.time_str, current_time);
+			all_pkt.count = sat_count;
+
+			for (int i = 0; i < sat_count; i++) {
+                all_pkt.sum[i].id = i;
+                strncpy(all_pkt.sum[i].name, sat_list[i].tle.name, sizeof(all_pkt.sum[i].name));
+                all_pkt.sum[i].alt = sat_list[i].pos.alt;
+                all_pkt.sum[i].speed = sat_list[i].current_speed;
+                evaluate_status(&sat_list[i], &all_pkt.sum[i]);
+            }
+
+			if (send(client_fd, &all_pkt, sizeof(AllSatellitesPacket), 0) <= 0) break;
+
+		} else if (req.type == REQ_DETAIL) {
+			int target = req.target_id;
+			if (target < 0 || target >= sat_count) target = 0;
+			if (send(client_fd, &sat_list[target], sizeof(SatellitePacket), 0) <= 0) break;
 		}
 
 		sleep(1);
@@ -77,64 +145,5 @@ void run_server(const char *file_path) {
 
 	close(client_fd);
 	close(server_fd);
-}
-
-int main() {
-	char file_list[MAX_SATELLITES][PATH_LENGTH];
-	int file_count = 0;
-
-	DIR *dir = opendir("data");
-	if (dir == NULL) {
-		printf("can't open the diretory");
-		return 1;
-	}
-
-	struct dirent *entry;
-	while ((entry = readdir(dir)) != NULL && file_count < MAX_SATELLITES) {
-		if (entry->d_type == DT_REG && is_tle_file(entry->d_name)) {
-			snprintf(file_list[file_count], PATH_LENGTH, "data/%s", entry->d_name);
-			file_count++;
-		}
-	}
-	closedir(dir);
-
-	if (file_count == 0) {
-		printf("No file in 'data' folder");
-		return 1;
-	}
-
-	// select a satellite & formatting
-	printf("==== List of Satellite ====\n");
-	for (int i = 0; i < file_count; i++) {
-		char display_name[PATH_LENGTH];
-
-		// read from +5
-		if (strncmp(file_list[i], "data/", 5) == 0) {
-			snprintf(display_name, sizeof(display_name), "%s", file_list[i] + 5);
-		} else {
-			snprintf(display_name, sizeof(display_name), "%s", file_list[i]);
-		}
-		char *ext = strrchr(display_name, '.');
-		if (ext != NULL && strcmp(ext, ".tle") == 0) {
-			*ext = '\0';
-		}
-
-		printf("[%d] %s\n", i + 1, display_name);
-	}
-	printf("===========================\n");
-	printf("Select Satellite. (1-%d): ", file_count);
-
-	int choice;
-	if (scanf("%d", &choice) != 1) {
-		printf("Select a valid number\n");
-		return 1;
-	}
-	
-	if (choice < 1 || choice > file_count) {
-		printf("Wrong number.\n");
-		return 1;
-	}
-
-	run_server(file_list[choice - 1]);
 	return 0;
 }

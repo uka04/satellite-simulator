@@ -9,13 +9,14 @@
 #include "protocol.h"
 
 void display_summary_ui(const AllSatellitesPacket *pkt) { 
-	mvprintw(0, 0, "[%s] == Multi-Satellite Control Dashboard ==", pkt->time_str);
-	mvprintw(2, 0, "ID  %-20s %-12s %-12s %-15s", "Satellite Name", "Alt(km)", "Speed(km/s)", "Status");
+	mvprintw(0, 0, "[%s]", pkt->time_str);
+	mvprintw(1, 0, "== Multi-Satellite Control Dashboard ==");
+	mvprintw(2, 0, "ID  %-20s %-12s %-12s%-15s", "Satellite Name", "Alt(km)", "Speed(km/s)", "Status");
     mvprintw(3, 0, "------------------------------------------------------------------");
 
 	for (int i = 0; i < pkt->count; i++) {
 		int row = 4 + i;
-		mvprintw(row, 0, "[%d] %-20s %-12.2f %-12.2f ", i + 1, pkt->sum[i].name, pkt->sum[i].alt, pkt->sum[i].speed);
+		mvprintw(row, 0, "[%d] %-20s %-12.2f %-12.2f", i + 1, pkt->sum[i].name, pkt->sum[i].alt, pkt->sum[i].speed);
 
 		if (pkt->sum[i].status == STATUS_CRITICAL) {
 			attron(COLOR_PAIR(1) | A_BOLD);

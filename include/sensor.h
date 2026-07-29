@@ -10,7 +10,7 @@ extern "C" {
 struct elsetrec;
 
 typedef struct {
-	char name[30];
+	char name[20];
 
 	int NoradId;
 	char Classification[2];

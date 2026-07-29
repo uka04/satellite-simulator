@@ -68,8 +68,6 @@ int main() {
 	}
 
 	// socket communication
-	printf("==== List of Satellite ====\n");
-
 	int server_fd, client_fd;
 	struct sockaddr_in server_addr, client_addr;
 	socklen_t addr_len = sizeof(client_addr);

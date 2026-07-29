@@ -150,6 +150,8 @@ int main() {
 	cbreak();
 	noecho();
 	nodelay(stdscr, TRUE);	// non-blocking, key down
+	keypad(stdscr, TRUE);	
+	mousemask(0, NULL);		// mouse/wheel block
 	curs_set(0);
 	start_color();
 	init_pair(1, COLOR_RED, COLOR_BLACK);

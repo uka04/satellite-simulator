@@ -138,7 +138,7 @@ int main() {
 
 	serv_addr.sin_family = AF_INET;	//ipv4
     serv_addr.sin_port = htons(SERVER_PORT); // destination port setting
-    inet_pton(AF_INET, "127.0.0.1", &serv_addr.sin_addr);
+    inet_pton(AF_INET, "192.168.0.26", &serv_addr.sin_addr);
 
 	printf("Connecting to Satellite Server. \n");
 	if (connect(sock_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
